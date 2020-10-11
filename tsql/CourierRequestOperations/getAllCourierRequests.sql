@@ -1,0 +1,2 @@
+create proc getAllCourierRequests
+as select UsernameUser from PromoteRequest

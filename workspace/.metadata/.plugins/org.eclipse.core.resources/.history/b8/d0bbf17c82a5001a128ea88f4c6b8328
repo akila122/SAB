@@ -1,0 +1,27 @@
+package rs.etf.sab.operations;
+
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public interface VehicleOperations {
+  boolean insertVehicle(String paramString, int paramInt, BigDecimal paramBigDecimal1, BigDecimal paramBigDecimal2);
+  
+  int deleteVehicles(String... paramVarArgs);
+  
+  List<String> getAllVehichles();
+  
+  boolean changeFuelType(String paramString, int paramInt);
+  
+  boolean changeConsumption(String paramString, BigDecimal paramBigDecimal);
+  
+  boolean changeCapacity(String paramString, BigDecimal paramBigDecimal);
+  
+  boolean parkVehicle(String paramString, int paramInt);
+}
+
+
+/* Location:              C:\Users\aleks\OneDrive\Desktop\New folder (2)\!\rs\etf\sab\operations\VehicleOperations.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

@@ -1,0 +1,21 @@
+package rs.etf.sab.operations;
+
+import java.util.List;
+
+public interface CourierRequestOperation {
+  boolean insertCourierRequest(String paramString1, String paramString2);
+  
+  boolean deleteCourierRequest(String paramString);
+  
+  boolean changeDriverLicenceNumberInCourierRequest(String paramString1, String paramString2);
+  
+  List<String> getAllCourierRequests();
+  
+  boolean grantRequest(String paramString);
+}
+
+
+/* Location:              C:\Users\aleks\OneDrive\Desktop\New folder (2)\!\rs\etf\sab\operations\CourierRequestOperation.class
+ * Java compiler version: 8 (52.0)
+ * JD-Core Version:       1.1.3
+ */

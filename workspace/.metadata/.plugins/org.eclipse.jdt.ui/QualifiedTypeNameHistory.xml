@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="java.sql.CallableStatement"/>
+    <fullyQualifiedTypeName name="java.util.LinkedList"/>
+    <fullyQualifiedTypeName name="java.sql.Connection"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.UserOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.VehicleOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.CourierOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.CourierRequestOperation"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.GeneralOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.DriveOperation"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.PackageOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.AddressOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.CityOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.CourierOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.CourierRequestOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.DriveOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.GeneralOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.PackageOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.StockroomOperationsImpl"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.VehicleOperationsImpl"/>
+    <fullyQualifiedTypeName name="org.junit.Assert"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.student.UserOperationsImpl"/>
+    <fullyQualifiedTypeName name="java.util.Random"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.StockroomOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.CityOperations"/>
+    <fullyQualifiedTypeName name="java.util.Map"/>
+    <fullyQualifiedTypeName name="com.sun.tools.javac.util.Pair"/>
+    <fullyQualifiedTypeName name="java.math.BigDecimal"/>
+    <fullyQualifiedTypeName name="java.util.HashMap"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.tests.TestRunner"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.tests.Util"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.operations.AddressOperations"/>
+    <fullyQualifiedTypeName name="rs.etf.sab.tests.Util.Pair"/>
+</qualifiedTypeNameHistroy>

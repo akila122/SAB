@@ -1,0 +1,72 @@
+package rs.etf.sab.student;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import org.junit.Assert;
+
+import rs.etf.sab.operations.*;
+import rs.etf.sab.tests.TestHandler;
+import rs.etf.sab.tests.TestRunner;
+
+public class StudentMain {
+
+	static class Pair {
+		Integer x;
+		Integer y;
+
+		public Pair(Integer a, Integer b) {
+			x = a;
+			y = b;
+		}
+
+	}
+
+	static AddressOperations addressOperations;
+	static CityOperations cityOperations;
+	static CourierOperations courierOperations;
+	static CourierRequestOperation courierRequestOperation;
+	static DriveOperation driveOperation;
+	static GeneralOperations generalOperations;
+	static PackageOperations packageOperations;
+	static StockroomOperations stockroomOperations;
+	static UserOperations userOperations;
+	static VehicleOperations vehicleOperations;
+
+	static Map<Integer, Pair> addressesCoords = new HashMap<>();
+	static Map<Integer, BigDecimal> packagePrice = new HashMap<>();
+
+	public static void main(String[] args) {
+
+		Connection conn = Connector.connect();
+
+		if (conn == null) {
+			System.out.println("Connection failed.");
+			return;
+		}
+
+		addressOperations = new AddressOperationsImpl(conn); // Change this to your implementation.
+		cityOperations = new CityOperationsImpl(conn); // Do it for all classes.
+		courierOperations = new CourierOperationsImpl(conn); // e.g. = new MyDistrictOperations();
+		courierRequestOperation = new CourierRequestOperationsImpl(conn);
+		driveOperation = new DriveOperationsImpl(conn);
+		generalOperations = new GeneralOperationsImpl(conn);
+		packageOperations = new PackageOperationsImpl(conn);
+		stockroomOperations = new StockroomOperationsImpl(conn);
+		userOperations = new UserOperationsImpl(conn);
+		vehicleOperations = new VehicleOperationsImpl(conn);
+
+		generalOperations.eraseAll();
+
+		TestHandler.createInstance(addressOperations, cityOperations, courierOperations, courierRequestOperation,
+				driveOperation, generalOperations, packageOperations, stockroomOperations, userOperations,
+				vehicleOperations);
+
+		TestRunner.runTests();
+
+	}
+}

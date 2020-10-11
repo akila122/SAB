@@ -1,0 +1,284 @@
+package rs.etf.sab.student;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+import org.junit.Assert;
+
+import rs.etf.sab.operations.*;
+import rs.etf.sab.tests.TestHandler;
+import rs.etf.sab.tests.TestRunner;
+
+
+public class StudentMain {
+
+	static class Pair {
+		Integer x;
+		Integer y;
+
+		public Pair(Integer a, Integer b) {
+			x = a;
+			y = b;
+		}
+
+	}
+
+	static AddressOperations addressOperations;
+	static CityOperations cityOperations;
+	static CourierOperations courierOperations;
+	static CourierRequestOperation courierRequestOperation;
+	static DriveOperation driveOperation;
+	static GeneralOperations generalOperations;
+	static PackageOperations packageOperations;
+	static StockroomOperations stockroomOperations;
+	static UserOperations userOperations;
+	static VehicleOperations vehicleOperations;
+
+	static Map<Integer, Pair> addressesCoords = new HashMap<>();
+	static Map<Integer, BigDecimal> packagePrice = new HashMap<>();
+
+	public static void main(String[] args) {
+
+		Connection conn = Connector.connect();
+
+		if (conn == null) {
+			System.out.println("Connection failed.");
+			return;
+		}
+
+		addressOperations = new AddressOperationsImpl(conn); // Change this to your implementation.
+		cityOperations = new CityOperationsImpl(conn); // Do it for all classes.
+		courierOperations = new CourierOperationsImpl(conn); // e.g. = new MyDistrictOperations();
+		courierRequestOperation = new CourierRequestOperationsImpl(conn);
+		driveOperation = new DriveOperationsImpl(conn);
+		generalOperations = new GeneralOperationsImpl(conn);
+		packageOperations = new PackageOperationsImpl(conn);
+		stockroomOperations = new StockroomOperationsImpl(conn);
+		userOperations = new UserOperationsImpl(conn);
+		vehicleOperations = new VehicleOperationsImpl(conn);
+
+		generalOperations.eraseAll();
+
+		TestHandler.createInstance(addressOperations, cityOperations, courierOperations, courierRequestOperation,
+				driveOperation, generalOperations, packageOperations, stockroomOperations, userOperations,
+				vehicleOperations);
+
+		//TestRunner.runTests();
+		
+
+		
+		 	int BG = insertCity("Belgrade", "11000");
+		    int KG = insertCity("Kragujevac", "550000");
+		    int VA = insertCity("Valjevo", "14000");
+		    int CA = insertCity("Cacak", "32000");
+		    int idAddressBG1 = insertAddress("Kraljice Natalije", 37, BG, 11, 15);
+		    int idAddressBG2 = insertAddress("Bulevar kralja Aleksandra", 73, BG, 10, 10);
+		    int idAddressBG3 = insertAddress("Vojvode Stepe", 39, BG, 1, -1);
+		    int idAddressBG4 = insertAddress("Takovska", 7, BG, 11, 12);
+		    int idAddressBG5 = insertAddress("Bulevar kralja Aleksandra", 37, BG, 12, 12);
+		    int idAddressKG1 = insertAddress("Daniciceva", 1, KG, 4, 310);
+		    int idAddressKG2 = insertAddress("Dure Pucara Starog", 2, KG, 11, 320);
+		    int idAddressVA1 = insertAddress("Cika Ljubina", 8, VA, 102, 101);
+		    int idAddressVA2 = insertAddress("Karadjordjeva", 122, VA, 104, 103);
+		    int idAddressVA3 = insertAddress("Milovana Glisica", 45, VA, 101, 101);
+		    int idAddressCA1 = insertAddress("Zupana Stracimira", 1, CA, 110, 309);
+		    int idAddressCA2 = insertAddress("Bulevar Vuka Karadzica", 1, CA, 111, 315);
+		    int idStockroomBG = insertStockroom(idAddressBG1);
+		    int idStockroomVA = insertStockroom(idAddressVA1);
+		    insertAndParkVehicle("BG1675DA", new BigDecimal(6.3D), new BigDecimal(1000.5D), 2, idStockroomBG);
+		    insertAndParkVehicle("VA1675DA", new BigDecimal(7.3D), new BigDecimal(500.5D), 1, idStockroomVA);
+		    String username = "crno.dete";
+		    insertUser(username, "Svetislav", "Kisprdilov", "Test_123", idAddressBG1);
+		    String courierUsernameBG = "postarBG";
+		    insertCourier(courierUsernameBG, "Pera", "Peric", "Postar_73", idAddressBG2, "654321");
+		    String courierUsernameVA = "postarVA";
+		    insertCourier(courierUsernameVA, "Pera", "Peric", "Postar_73", idAddressBG2, "123456");
+		    int type1 = 0;
+		    BigDecimal weight1 = new BigDecimal(2);
+		    int idPackage1 = insertAndAcceptPackage(idAddressBG2, idAddressCA1, username, type1, weight1);
+		    int type2 = 1;
+		    BigDecimal weight2 = new BigDecimal(4);
+		    int idPackage2 = insertAndAcceptPackage(idAddressBG3, idAddressVA1, username, type2, weight2);
+		    int type3 = 2;
+		    BigDecimal weight3 = new BigDecimal(5);
+		    int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
+		    Assert.assertEquals(0L, courierOperations.getCouriersWithStatus(1).size());
+		    driveOperation.planingDrive(courierUsernameBG);
+		    Assert.assertTrue(courierOperations.getCouriersWithStatus(1).contains(courierUsernameBG));
+		    int type4 = 3;
+		    BigDecimal weight4 = new BigDecimal(2);
+		    int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
+		    Assert.assertEquals(4L, packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+		    Assert.assertEquals(-2L, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(1L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(1L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(3L, packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+		    Assert.assertEquals(1L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(-2L, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(1L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(2L, packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+		    Assert.assertEquals(2L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(-2L, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(1L, packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+		    Assert.assertEquals(3L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(idPackage2, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(1L, packageOperations.getAllPackagesCurrentlyAtCity(VA).size());
+		    Assert.assertEquals(2L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(idPackage1, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(2L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(1L, packageOperations.getAllPackagesCurrentlyAtCity(CA).size());
+		    Assert.assertEquals(1L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(idPackage3, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage1));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage2));
+		    Assert.assertEquals(3L, packageOperations.getDeliveryStatus(idPackage3));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage1));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage2));
+		    Assert.assertNotEquals(-1L, packageOperations.getCurrentLocationOfPackage(idPackage3));
+		    Assert.assertEquals(1L, packageOperations.getAllPackagesCurrentlyAtCity(KG).size());
+		    Assert.assertEquals(0L, driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+		    Assert.assertEquals(-1L, driveOperation.nextStop(courierUsernameBG));
+		    Assert.assertEquals(1L, packageOperations.getDeliveryStatus(idPackage4));
+		    Assert.assertEquals(1L, packageOperations.getAllUndeliveredPackages().size());
+		    Assert.assertTrue(packageOperations.getAllUndeliveredPackages().contains(Integer.valueOf(idPackage4)));
+		    Assert.assertEquals(2L, courierOperations.getCouriersWithStatus(0).size());
+		    double distance = Util.getDistance((Pair[])new Pair[] { addressesCoords.get(Integer.valueOf(idAddressBG1)), addressesCoords.get(Integer.valueOf(idAddressBG2)), addressesCoords
+		          .get(Integer.valueOf(idAddressBG3)), addressesCoords.get(Integer.valueOf(idAddressBG4)), addressesCoords
+		          .get(Integer.valueOf(idAddressVA1)), addressesCoords.get(Integer.valueOf(idAddressCA1)), addressesCoords.get(Integer.valueOf(idAddressKG1)), addressesCoords
+		          .get(Integer.valueOf(idAddressBG1)) });
+		    BigDecimal profit = ((BigDecimal)packagePrice.get(Integer.valueOf(idPackage1))).add(packagePrice.get(Integer.valueOf(idPackage2))).add(packagePrice.get(Integer.valueOf(idPackage3)));
+		    profit = profit.subtract((new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance)));
+		    Assert.assertTrue((courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0));
+		    Assert.assertTrue((courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(0.95D))) > 0));
+	
+		
+	}
+
+	static int insertCity(final String name, final String postalCode) {
+		final int idCity = cityOperations.insertCity(name, postalCode);
+		Assert.assertNotEquals(-1L, (long) idCity);
+		Assert.assertTrue(cityOperations.getAllCities().contains(idCity));
+		return idCity;
+	}
+
+	static int insertAddress(final String street, final int number, final int idCity, final int x, final int y) {
+		final int idAddress = addressOperations.insertAddress(street, number, idCity, x, y);
+		Assert.assertNotEquals(-1L, (long) idAddress);
+		Assert.assertTrue(addressOperations.getAllAddresses().contains(idAddress));
+		addressesCoords.put(idAddress, new Pair(x, y));
+		return idAddress;
+	}
+
+	static String insertUser(final String username, final String firstName, final String lastName,
+			final String password, final int idAddress) {
+		Assert.assertTrue(userOperations.insertUser(username, firstName, lastName, password, idAddress));
+		Assert.assertTrue(userOperations.getAllUsers().contains(username));
+		return username;
+	}
+
+	static String insertCourier(final String username, final String firstName, final String lastName,
+			final String password, final int idAddress, final String driverLicenceNumber) {
+		insertUser(username, firstName, lastName, password, idAddress);
+		Assert.assertTrue(courierOperations.insertCourier(username, driverLicenceNumber));
+		return username;
+	}
+
+	static public void insertAndParkVehicle(final String licencePlateNumber, final BigDecimal fuelConsumption,
+			final BigDecimal capacity, final int fuelType, final int idStockroom) {
+		Assert.assertTrue(vehicleOperations.insertVehicle(licencePlateNumber, fuelType, fuelConsumption, capacity));
+		Assert.assertTrue(vehicleOperations.getAllVehichles().contains(licencePlateNumber));
+		Assert.assertTrue(vehicleOperations.parkVehicle(licencePlateNumber, idStockroom));
+	}
+
+	static public int insertStockroom(final int idAddress) {
+		final int stockroomId = stockroomOperations.insertStockroom(idAddress);
+		Assert.assertNotEquals(-1L, (long) stockroomId);
+		Assert.assertTrue(stockroomOperations.getAllStockrooms().contains(stockroomId));
+		return stockroomId;
+	}
+
+	static int insertAndAcceptPackage(final int addressFrom, final int addressTo, final String userName,
+			final int packageType, final BigDecimal weight) {
+		final int idPackage = packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
+		Assert.assertNotEquals(-1L, (long) idPackage);
+		Assert.assertTrue(packageOperations.acceptAnOffer(idPackage));
+		Assert.assertTrue(packageOperations.getAllPackages().contains(idPackage));
+		Assert.assertEquals(1L, (long) packageOperations.getDeliveryStatus(idPackage));
+		final BigDecimal price = Util.getPackagePrice(packageType, weight,
+				Util.getDistance(new Pair[] { addressesCoords.get(addressFrom), addressesCoords.get(addressTo) }));
+		Assert.assertTrue(
+				packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(1.05))) < 0);
+		Assert.assertTrue(
+				packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(0.95))) > 0);
+		packagePrice.put(idPackage, price);
+		return idPackage;
+	}
+
+	static public class Util {
+		static double euclidean(final int x1, final int y1, final int x2, final int y2) {
+			return Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+		}
+
+		static BigDecimal getPackagePrice(final int type, final BigDecimal weight, final double distance) {
+			switch (type) {
+			case 0: {
+				return new BigDecimal(115.0 * distance);
+			}
+			case 1: {
+				return new BigDecimal((175.0 + weight.doubleValue() * 100.0) * distance);
+			}
+			case 2: {
+				return new BigDecimal((250.0 + weight.doubleValue() * 100.0) * distance);
+			}
+			case 3: {
+				return new BigDecimal((350.0 + weight.doubleValue() * 500.0) * distance);
+			}
+			default: {
+				return null;
+			}
+			}
+		}
+
+		static double getDistance(final Pair... addresses) {
+			double distance = 0.0;
+			for (int i = 1; i < addresses.length; ++i) {
+				if(addresses[i-1].x == null ||addresses[i].x ==null||addresses[i-1].y == null ||addresses[i].y ==null)
+					System.out.println("BAD");
+					
+				distance += euclidean((int) addresses[i - 1].x, (int) addresses[i - 1].y, (int) addresses[i].x,
+						(int) addresses[i].y);
+			}
+			return distance;
+		}
+	}
+}
